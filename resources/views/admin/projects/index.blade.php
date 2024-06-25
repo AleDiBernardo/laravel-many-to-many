@@ -22,6 +22,7 @@
                         <th scope="col">Title</th>
                         <th scope="col">Owner</th>
                         <th scope="col">Description</th>
+                        <th scope="col">Technologies</th>
                         <th scope="col">Functions</th>
                     </tr>
                     </thead>
@@ -33,6 +34,13 @@
                                 <td>{{ $curProject->title }}</td>
                                 <td>{{ $curProject->owner }}</td>
                                 <td>{{ $curProject->description }}</td>
+                                @if (count($curProject->technologies) > 0)
+                                    
+                                    <td>{{ count($curProject->technologies) }}</td>
+                                @else
+                                    <td> None </td>
+                                @endif
+
                                 <td>
                                     <div class="d-flex gap-2">
                                         <a href="{{ route('admin.projects.show',['project'=>$curProject->slug])  }}" class="btn btn-success fw-bold text-light">Details</a>

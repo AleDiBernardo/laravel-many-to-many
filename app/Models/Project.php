@@ -15,4 +15,8 @@ class Project extends Model
     {
         return $this->belongsTo(Type::class); // Una Car appartiene a un Brand
     }
+
+    public function technologies(){
+        return $this->belongsToMany(Technology::class);
+    }
 }

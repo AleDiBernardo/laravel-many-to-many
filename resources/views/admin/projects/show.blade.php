@@ -11,6 +11,9 @@
                 </div>
                 <div class="card-body">
                     <p><strong>Owner:</strong> {{ $project->owner }}</p>
+                    @foreach ($project->technologies as $technology)
+                        <p><strong>Technologies:</strong> {{ $technology->name }}</p>
+                    @endforeach
                     <p><strong>Description:</strong> {{ $project->description }}</p>
                     <p><strong>Type:</strong> {{ $project->type?->name ? $project->type?->name : 'Unknown'  }}</p>
                 </div>
