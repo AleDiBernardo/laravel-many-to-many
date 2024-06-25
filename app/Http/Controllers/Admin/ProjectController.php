@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Project;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Project;
+use App\Models\Technology;
 use App\Models\Type;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 class ProjectController extends Controller
 {
     /**
@@ -15,7 +17,7 @@ class ProjectController extends Controller
     public function index()
     {
         $projectsList = Project::all();
-        return view('admin.projects.index',compact('projectsList'));
+        return view('admin.projects.index', compact('projectsList'));
     }
 
     /**
@@ -23,28 +25,59 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $technologies = Technology::all();
         $types = Type::all();
-        return view('admin.projects.create',compact('types'));
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|unique:projects|max:255',
+    //         'owner' => 'required|max:255',
+    //         'description' => 'nullable|max:255',
+    //     ]);
+
+    //     $project = new Project();
+    //     $project->title = $request->title;
+    //     $project->owner = $request->owner;
+    //     $project->description = $request->description;
+    //     $project->type_id = $request->type_id;
+    //     $project->slug = Str::slug($request->title);
+    //     $project->save();
+
+    //     if (isset($validatedData['technologies'])) {
+    //         $project->technologies()->sync($validatedData['technologies']);
+    //     }
+
+    //     return redirect()->route('admin.projects.index');
+    // }
+
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|unique:projects|max:255',
             'owner' => 'required|max:255',
             'description' => 'nullable|max:255',
+            'type_id' => 'required|exists:types,id', 
+            'technologies' => 'nullable|array', 
         ]);
 
         $project = new Project();
-        $project->title = $request->title;
-        $project->owner = $request->owner;
-        $project->description = $request->description;
-        $project->type_id = $request->type_id;
-        $project->slug = Str::slug($request->title);
+        $project->title = $validatedData['title'];
+        $project->owner = $validatedData['owner'];
+        $project->description = $validatedData['description'];
+        $project->type_id = $validatedData['type_id'];
+        $project->slug = Str::slug($validatedData['title']);
         $project->save();
+
+        // Aggiungi le tecnologie associate al progetto nella tabella pivot
+        if (isset($validatedData['technologies'])) {
+            $project->technologies()->sync($validatedData['technologies']);
+        }
 
         return redirect()->route('admin.projects.index');
     }
@@ -54,7 +87,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return view('admin.projects.show',compact('project'));
+        return view('admin.projects.show', compact('project'));
     }
 
     /**
@@ -65,7 +98,7 @@ class ProjectController extends Controller
 
         $types = Type::all();
         return view('admin.projects.edit', compact('project', 'types'));
-        
+
     }
 
     /**
@@ -77,7 +110,7 @@ class ProjectController extends Controller
             'title' => 'required|max:255|unique:projects,title,' . $project->id,
             'owner' => 'required|max:255',
             'description' => 'nullable|max:255',
-            'type_id' => 'nullable'
+            'type_id' => 'nullable',
         ]);
 
         $slug = Str::slug($request->title, '-');

@@ -35,6 +35,9 @@
             <input type="text" class="form-control" id="owner" name="owner" required>
         </div>
 
+        
+        
+
         <div class="form-group">
             <label for="description">Description:</label>
             <textarea class="form-control" id="description" name="description"></textarea>
@@ -53,12 +56,26 @@
             <span>Slug:</span>
             <p class="fw-bold" id="slug"></p>
         </div>
+
+        <div class="form-group">
+                
+            <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+               
+                    @foreach ($technologies as $technology)
+                        <input type="checkbox" class="btn-check" id="tech-{{ $technology->id }}" name="technologies[]" value="{{ $technology->id }}" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="tech-{{ $technology->id }}">{{ $technology->name }}</label>
+                    @endforeach
+            
+            </div>
+            
+    </div>
         
 
         <button type="submit" class="btn btn-primary mt-2">Add</button>
         <a href="{{route('admin.projects.index')}}" class="btn btn-secondary mt-2">Cancel</a>
 
     </form>
+    
 </div>
 
 
