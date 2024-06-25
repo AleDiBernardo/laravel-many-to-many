@@ -4,7 +4,7 @@
 
 <div class="container">
     <h1 class="mt-4 fw-bold">Edit Project</h1>
-    
+
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.projects.update', $project->slug) }}" method="POST">
+    <form action="{{ route('admin.projects.update', $project->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -40,16 +40,32 @@
             <textarea class="form-control" id="description" name="description">{{ old('description', $project->description) }}</textarea>
         </div>
 
-        <label for="type_id" class="form-label">Typology:</label>
+        <div class="form-group">
+            <label for="type_id">Typology:</label>
+            <select class="form-select" id="type_id" name="type_id">
+                <option value=""></option>
+                @foreach($types as $type)
+                    <option value="{{ $type->id }}" {{ $project->type_id == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-        <select class="form-select" name="type_id" id="type_id">
-            <option value=""></option>
-            @foreach($types as $index => $type)
-                <option @selected($project->type_id === $index+1) value="{{ $type->id }}">{{ $type->name }}</option>
-            @endforeach
-        </select>
+        <div>
+            <span>Slug:</span>
+            <p class="fw-bold" id="slug">{{ old('slug',$project->slug) }}</p>
+        </div>
 
-        <button type="submit" class="btn btn-primary mt-2">Update</button>
+        <div class="form-group">
+            <label for="technologies">Technologies:</label><br>
+            <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                @foreach ($technologies as $technology)
+                    <input type="checkbox" class="btn-check" id="tech-{{ $technology->id }}" name="technologies[]" value="{{ $technology->id }}" {{ $project->technologies->contains($technology->id) ? 'checked' : '' }}>
+                    <label class="btn btn-outline-primary" for="tech-{{ $technology->id }}">{{ $technology->name }}</label>
+                @endforeach
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
         <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary mt-2">Cancel</a>
     </form>
 </div>

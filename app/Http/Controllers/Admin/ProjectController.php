@@ -62,8 +62,8 @@ class ProjectController extends Controller
             'title' => 'required|unique:projects|max:255',
             'owner' => 'required|max:255',
             'description' => 'nullable|max:255',
-            'type_id' => 'required|exists:types,id', 
-            'technologies' => 'nullable|array', 
+            'type_id' => 'required|exists:types,id',
+            'technologies' => 'nullable|array',
         ]);
 
         $project = new Project();
@@ -97,32 +97,62 @@ class ProjectController extends Controller
     {
 
         $types = Type::all();
-        return view('admin.projects.edit', compact('project', 'types'));
+        $technologies = Technology::all();
+        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
 
     }
 
     /**
      * Update the specified resource in storage.
      */
+    // public function update(Request $request, Project $project)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|max:255|unique:projects,title,' . $project->id,
+    //         'owner' => 'required|max:255',
+    //         'description' => 'nullable|max:255',
+    //         'type_id' => 'nullable',
+    //     ]);
+
+    //     $slug = Str::slug($request->title, '-');
+
+    //     $project->title = $request->title;
+    //     $project->owner = $request->owner;
+    //     $project->description = $request->description;
+    //     $project->type_id = $request->type_id;
+    //     $project->slug = $slug;
+    //     $project->save();
+
+    //     return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully!');
+    // }
     public function update(Request $request, Project $project)
     {
-        $request->validate([
-            'title' => 'required|max:255|unique:projects,title,' . $project->id,
+        dd($request->all());
+        $validatedData = $request->validate([
+            'title' => 'required|unique:projects,title,' . $project->id . '|max:255',
             'owner' => 'required|max:255',
-            'description' => 'nullable|max:255',
-            'type_id' => 'nullable',
+            'description' => 'nullable',
+            'type_id' => 'required|exists:types,id',
+            'technologies' => 'nullable|array', 
+            'technologies.*' => 'exists:technologies,id', 
         ]);
 
-        $slug = Str::slug($request->title, '-');
-
-        $project->title = $request->title;
-        $project->owner = $request->owner;
-        $project->description = $request->description;
-        $project->type_id = $request->type_id;
-        $project->slug = $slug;
+       
+        $project->title = $validatedData['title'];
+        $project->owner = $validatedData['owner'];
+        $project->description = $validatedData['description'];
+        $project->type_id = $validatedData['type_id'];
+        $project->slug = Str::slug($validatedData['title']);
         $project->save();
 
-        return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully!');
+        
+        if (isset($validatedData['technologies'])) {
+            $project->technologies()->sync($validatedData['technologies']);
+        } else {
+            $project->technologies()->detach(); 
+        }
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
     }
 
     /**
