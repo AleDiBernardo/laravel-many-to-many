@@ -63,16 +63,28 @@
                   <i class="fa-solid fa-tachometer-alt fa-lg fa-fw"></i> Dashboard
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item mt-2">
                 <a class="nav-link text-white {{ Route::currentRouteName() == 'admin.projects.index' ? 'bg-secondary' : '' }}"
                   href="{{ route('admin.projects.index') }}">
                   <i class="fa-solid fa-table"></i> All Projects
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item m-1">
+                <a class="nav-link text-white {{ Route::currentRouteName() == 'admin.projects.create' ? 'bg-secondary' : '' }}"
+                  href="{{ route('admin.projects.create') }}">
+                  <i class="fa-solid fa-plus"></i> Create Projects
+                </a>
+              </li>
+              <li class="nav-item mt-2">
                 <a class="nav-link text-white {{ Route::currentRouteName() == 'admin.types.index' ? 'bg-secondary' : '' }}"
                   href="{{ route('admin.types.index') }}">
                   <i class="fa-solid fa-table"></i> All Types
+                </a>
+              </li>
+              <li class="nav-item m-1">
+                <a class="nav-link text-white {{ Route::currentRouteName() == 'admin.types.create' ? 'bg-secondary' : '' }}"
+                  href="{{ route('admin.types.create') }}">
+                  <i class="fa-solid fa-plus"></i> Create Type
                 </a>
               </li>
             </ul>
