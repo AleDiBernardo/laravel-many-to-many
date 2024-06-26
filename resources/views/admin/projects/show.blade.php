@@ -14,7 +14,7 @@
                     <p>
                         <strong>Technologies:</strong>
                         @foreach ($project->technologies as $technology)
-                            <span>{{ $technology->name }}</span> 
+                            <span class="badge" style="background-color: {{$technology->color}}">{{ $technology->name }}</span> 
                             @unless ($loop->last)
                                 <span>,</span>
                             @endunless

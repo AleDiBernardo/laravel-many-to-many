@@ -21,15 +21,15 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.projects.update', $project->id) }}" method="POST">
+    <form action="{{ route('admin.projects.update', $project->slug) }}" method="POST">
         @csrf
         @method('PUT')
-
+        
         <div class="form-group">
             <label for="title">Title:</label>
             <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $project->title) }}" required>
         </div>
-
+        
         <div class="form-group">
             <label for="owner">Owner:</label>
             <input type="text" class="form-control" id="owner" name="owner" value="{{ old('owner', $project->owner) }}" required>
@@ -59,7 +59,14 @@
             <label for="technologies">Technologies:</label><br>
             <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
                 @foreach ($technologies as $technology)
-                    <input type="checkbox" class="btn-check" id="tech-{{ $technology->id }}" name="technologies[]" value="{{ $technology->id }}" {{ $project->technologies->contains($technology->id) ? 'checked' : '' }}>
+
+                    @if (old('technologies') !== null)
+                        <input type="checkbox" class="btn-check" id="tech-{{ $technology->id }}" name="technologies[]" value="{{ $technology->id }}" @checked(in_array($technology->id,old('technologies')))>
+                        
+                    @else
+                        
+                        <input type="checkbox" class="btn-check" id="tech-{{ $technology->id }}" name="technologies[]" value="{{ $technology->id }}" @checked($project->technologies->contains($technology))>
+                    @endif
                     <label class="btn btn-outline-primary" for="tech-{{ $technology->id }}">{{ $technology->name }}</label>
                 @endforeach
             </div>
