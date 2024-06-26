@@ -33,32 +33,9 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => 'required|unique:projects|max:255',
-    //         'owner' => 'required|max:255',
-    //         'description' => 'nullable|max:255',
-    //     ]);
-
-    //     $project = new Project();
-    //     $project->title = $request->title;
-    //     $project->owner = $request->owner;
-    //     $project->description = $request->description;
-    //     $project->type_id = $request->type_id;
-    //     $project->slug = Str::slug($request->title);
-    //     $project->save();
-
-    //     if (isset($validatedData['technologies'])) {
-    //         $project->technologies()->sync($validatedData['technologies']);
-    //     }
-
-    //     return redirect()->route('admin.projects.index');
-    // }
-
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'title' => 'required|unique:projects|max:255',
             'owner' => 'required|max:255',
             'description' => 'nullable|max:255',
@@ -67,20 +44,25 @@ class ProjectController extends Controller
         ]);
 
         $project = new Project();
-        $project->title = $validatedData['title'];
-        $project->owner = $validatedData['owner'];
-        $project->description = $validatedData['description'];
-        $project->type_id = $validatedData['type_id'];
-        $project->slug = Str::slug($validatedData['title']);
+        $project->title = $request->title;
+        $project->owner = $request->owner;
+        $project->description = $request->description;
+        $project->type_id = $request->type_id;
+        $project->slug = Str::slug($request->title);
         $project->save();
 
-        // Aggiungi le tecnologie associate al progetto nella tabella pivot
-        if (isset($validatedData['technologies'])) {
-            $project->technologies()->sync($validatedData['technologies']);
+        // if (isset($request->technologies)) {
+        //     $project->technologies()->sync($request->technologies);
+        // }
+
+        if($request->has('technologies')){
+            $project->technologies()->attach($request->technologies);
         }
 
         return redirect()->route('admin.projects.index');
     }
+
+    
 
     /**
      * Display the specified resource.
